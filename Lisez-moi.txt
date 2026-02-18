@@ -1,0 +1,63 @@
+╔═══════════════════════════════════════════════════════════════════════╗
+║                                                                       ║
+║         📊  OUTIL DE SEGMENTATION CLIENTÈLE FAE 2026  📊             ║
+║                  Cabinet Expert-Comptable                             ║
+║                                                                       ║
+╚═══════════════════════════════════════════════════════════════════════╝
+
+
+🚀 INSTALLATION (À FAIRE UNE SEULE FOIS)
+═══════════════════════════════════════════════════════════════════════
+
+1. Décompressez le dossier ZIP sur votre ordinateur
+   (par exemple dans : C:\Segmentation_FAE\)
+
+2. Double-cliquez sur : INSTALLER.bat
+   ⏳ Patientez 2-3 minutes (installation automatique)
+
+3. ✅ C'est prêt !
+
+
+🎯 UTILISATION (QUOTIDIENNE)
+═══════════════════════════════════════════════════════════════════════
+
+1. Double-cliquez sur : LANCER_OUTIL.bat
+
+2. L'outil s'ouvre automatiquement dans votre navigateur
+
+3. Importez votre fichier Excel et analysez votre portefeuille
+
+4. Pour fermer l'outil : fermez l'onglet du navigateur + la fenêtre noire
+
+
+⚙️ CONFIGURATION REQUISE
+═══════════════════════════════════════════════════════════════════════
+
+• Windows 10/11 (64 bits)
+• 2 Go d'espace disque disponible
+• Connexion internet (uniquement pour l'installation)
+• Navigateur web moderne (Chrome, Firefox, Edge)
+
+
+❓ PROBLÈMES FRÉQUENTS
+═══════════════════════════════════════════════════════════════════════
+
+🔴 "Windows a protégé votre PC"
+   → Cliquez sur "Informations complémentaires" puis "Exécuter quand même"
+
+🔴 L'outil ne se lance pas
+   → Relancez INSTALLER.bat
+   → Vérifiez que vous avez décompressé le ZIP (ne pas lancer depuis le ZIP)
+
+🔴 Erreur lors de l'installation
+   → Vérifiez votre connexion internet
+   → Désactivez temporairement l'antivirus
+
+
+📞 SUPPORT
+═══════════════════════════════════════════════════════════════════════
+
+Pour toute question : jesse@altaplana.fr
+
+Version : 7.2 
+Date : Février 2026

@@ -1,0 +1,577 @@
+🎯 PROMPT ULTIME : CRM Segmentation Clientèle FAE 2026
+📋 CONTEXTE & OBJECTIF
+Créer un outil de segmentation et de priorisation de portefeuille clients pour cabinets d'expertise comptable dans le cadre de la réforme de la facturation électronique 2026.
+Public cible : Experts-comptables avec portefeuilles de 50 à 1000+ clients
+
+Usage : Identifier rapidement les clients à accompagner en priorité, estimer le CA additionnel, planifier les actions
+
+Contrainte clé : Traitement 100% local (confidentialité totale), interface simple sans jargon technique
+🏗️ ARCHITECTURE TECHNIQUE
+Stack technologique
+
+    Python 3.13+ (portable embedded pour distribution)
+    Streamlit 1.40+ (interface web locale)
+    Pandas 2.2+ (traitement données)
+    Plotly 5.24+ (visualisations interactives)
+    XlsxWriter 3.2+ (export Excel enrichi)
+    python-docx 1.1+ (génération rapports Word modifiables)
+    openpyxl 3.1+ (lecture Excel avec validations)
+
+Structure fichiers
+
+📁 SEGMENTATION_FAE_TOOL/
+├── 📁 app/
+│   ├── main.py           # Interface Streamlit (navigation, pages, UI)
+│   ├── analyzer.py       # Moteur de scoring et calculs
+│   └── requirements.txt  # Dépendances Python
+└── 📁 python-3.xx-embed-amd64/  # Python portable (distribution uniquement)
+
+📊 MODÈLE DE DONNÉES
+Colonnes d'entrée (Excel)
+Obligatoires :
+
+    NOM : Nom du client (texte libre, clé primaire)
+    SECTEUR : Secteur d'activité (texte libre, 23 secteurs suggérés mais non imposés)
+    CA_HONORAIRES_HT : CA honoraires annuel en € (float, accepte virgules ET points)
+    OUTIL_COMPATIBLE_REFORME : État outil actuel (ENUM strict : OUI / PARTIELLEMENT / NON)
+    APPETENCE_INFORMATIQUE : Autonomie numérique (ENUM strict : TRES BON / BON / MOYEN / FAIBLE)
+
+Facultatives :
+
+    DIRIGEANT_PRENOM : Prénom (pour emails personnalisés)
+    DIRIGEANT_NOM : Nom
+    DIRIGEANT_EMAIL : Email
+
+Colonnes calculées automatiquement
+
+    SEGMENT : Calculé selon CA (Très Petit <1k€ / Petit 1-2.5k€ / Moyen 2.5-5k€ / Grand 5-10k€ / Très Grand >10k€)
+    SCORE_OPPORTUNITE : Score interne de priorisation (formule pondérée)
+    PRIORITE : Segment d'action (P1 Audit / P2 Formation / P3 Info / P4 Surveiller)
+    ETOILES : Notation visuelle (1 à 5 étoiles)
+
+🧮 ALGORITHME DE SCORING
+Formule de base
+
+SCORE_OPPORTUNITE = (CA_HONORAIRES_HT / 1500) × COEF_OUTIL × COEF_APPETENCE
+
+Coefficients par défaut
+OUTIL_COMPATIBLE_REFORME :
+
+    NON → 10 (fort enjeu, besoin changement outil)
+    PARTIELLEMENT → 5 (mise à jour/paramétrage requis)
+    OUI → 1 (déjà conforme, accompagnement léger)
+
+APPETENCE_INFORMATIQUE :
+
+    TRES BON → 3 (forte autonomie, adoption rapide)
+    BON → 2 (bonne autonomie)
+    MOYEN → 1 (accompagnement nécessaire)
+    FAIBLE → 0.5 (accompagnement renforcé)
+
+Seuils de priorisation
+
+    PRIORITÉ 1 (score ≥ 30) : Audit complet + pilotage (8h, 1200-1500€)
+    PRIORITÉ 2 (score ≥ 15) : Formation structurée (3h, 600-800€)
+    PRIORITÉ 3 (score ≥ 5) : Information + check rapide (0.5h, 150-300€)
+    PRIORITÉ 4 (score < 5) : À surveiller (veille passive)
+
+🎨 INTERFACE UTILISATEUR (11 PAGES)
+1️⃣ Accueil
+
+    Header gradient violet (#667eea → #764ba2)
+    Bouton téléchargement template Excel (2 feuilles : Instructions + Données)
+    Zone upload fichier Excel
+    Métriques clés si données chargées (clients, CA, jours avant réforme)
+
+2️⃣ Dashboard (vue 360°)
+Sections :
+
+    Urgence & Charge : Jours/mois avant 01/09/2026, heures missions, ETP requis
+    État Portefeuille : Clients totaux, % non-conformes, maturité digitale, rythme contacts/mois
+    Impact Financier : CA cabinet, CA à risque, potentiel missions, valeur/dossier
+    Graphiques : Pie chart (répartition P1/P2/P3/P4), Scatter plot (CA vs Score)
+
+3️⃣ Guide Missions (méthodologie cabinet)
+3 types de missions détaillées :
+Mission 1 - Audit & Pilotage (enjeu élevé) :
+
+    Objectif, étapes (3 phases sur 8 semaines), livrables, tarif 1200-1500€
+    Script email pré-rédigé
+    Checklist opérationnelle (factures, outils, circuit validation)
+
+Mission 2 - Formation & Mise en route :
+
+    Session 3h, pré-diagnostic + formation action + mise en route
+    Tarif 600-800€, livrables (support + procédure anti-rejet)
+
+Mission 3 - Information légère :
+
+    30-60 min, message rassurant, mini-checklist
+    Tarif 150-300€ ou inclus honoraires récurrents
+
+4️⃣ Matrice 2.0 (segmentation avancée)
+
+    Filtres dynamiques : Appétence (multiselect), Segment CA (multiselect), Conformité outil (multiselect)
+    Heatmaps croisées : Appétence × Outil, Segment CA × Outil
+    Table détaillée triée par score décroissant
+    Export Excel de la sélection filtrée
+
+5️⃣ Simulateur CA (projections financières)
+Paramètres par segment :
+
+    Activation ON/OFF
+    Taux conversion (slider 0-100%)
+    Prix unitaire mission (input €)
+
+Output :
+
+    CA additionnel total
+    % du CA cabinet
+    Waterfall chart (contribution par segment)
+
+6️⃣ Plan d'Action (roadmap cabinet)
+
+    Rythme recommandé (contacts/mois, heures estimées)
+    Gantt 6 mois : 4 phases (Sécurisation P1, Montée compétence P2, Info P3, Relances)
+    Playbook hebdomadaire type
+    Extraction cible semaine (top N clients, export Excel)
+
+7️⃣ Analyse Risques (diagnostic friction)
+Calcul score risque :
+
+SCORE_RISQUE = CA_WEIGHT + OUTIL_WEIGHT + APPETENCE_WEIGHT
+# CA >10k€ +40, 5-10k€ +30, 2.5-5k€ +20, 1-2.5k€ +10
+# OUTIL NON +40, PARTIELLEMENT +20
+# APPETENCE FAIBLE +20, MOYEN +10
+
+Niveaux : CRITIQUE (≥75), ÉLEVÉ (≥55), MOYEN (≥35), FAIBLE (<35)
+Visualisations :
+
+    Bar chart distribution risques
+    Heatmap risque moyen (Segment × Outil)
+    Top N clients à sécuriser (export Excel)
+
+8️⃣ Bibliothèque (contenus prêts à l'emploi)
+3 onglets :
+
+    Emails : 5 templates (Audit urgence, Formation 3h, Info, Relance J+3, Relance J+10)
+    Téléphone : Script d'appel 4 étapes (accroche, question clé, valeur, RDV)
+    Mini-documents : Guide 1 page (5 points essentiels FAE)
+
+Fonctionnalités : Copier-coller direct, téléchargement .txt, personnalisation dynamique (prénom/nom dirigeant)
+9️⃣ Livrables Word (rapports modifiables)
+Génération automatique rapport audit (python-docx) :
+
+    En-tête personnalisé (client, dirigeant, date)
+    Section 1 : Synthèse (tableau 6 lignes : segment, secteur, outil, appétence, accompagnement, score)
+    Section 2 : Contexte réglementaire (3 bullets)
+    Section 3 : Diagnostic existant
+    Section 4 : Recommandations + plan 8 semaines (tableau 4 phases)
+    Section 5 : Conclusion adaptée selon priorité
+    Footer cabinet (à personnaliser)
+
+Format : .docx éditable (police Calibri 11pt, titres hiérarchisés)
+🔟 Budget TCO (comparateur solutions)
+5 solutions pré-configurées :
+
+    Pennylane, Cegid Loop, Sage 100, Inqom, Tiime
+    Paramètres : prix base/user, nb factures inclus, prix/facture supp, coût formation, délai déploiement
+
+Inputs utilisateur :
+
+    Nb utilisateurs (1-50)
+    Nb factures/mois (10-2000)
+    Horizon (12/24/36 mois)
+
+Output :
+
+    Table comparative (coût mensuel, coût initial, TCO, délai, support)
+    Bar chart TCO
+    Tri automatique par TCO croissant
+
+1️⃣1️⃣ Exports
+
+    Excel complet : Toutes colonnes (entrée + calculées) au format .xlsx
+    Nom fichier : analyse_fae_YYYYMMDD.xlsx
+
+🔧 FONCTIONNALITÉS CLÉS DU MOTEUR (analyzer.py)
+Gestion robuste des données
+
+# Lecture intelligente feuille Excel
+- Détection automatique feuille "Données" (fallback sur 1ère feuille)
+- Colonnes manquantes → création automatique avec valeurs vides
+- Nettoyage texte : .strip(), .upper() pour ENUM
+- Conversion CA : virgules → points automatiquement
+- Filtrage : suppression lignes NOM vide
+
+# Diagnostic verbose (logs console)
+- Nb lignes brutes vs valides
+- Valeurs invalides détectées (OUTIL/APPETENCE)
+- CA min/max/moyen/médian
+- Secteurs personnalisés (texte libre accepté)
+
+Calculs KPIs avancés (17 indicateurs)
+
+calculate_advanced_kpis() retourne:
+{
+  "jours_avant_reforme": int,         # vs 01/09/2026
+  "mois_avant_reforme": float,
+  "total_heures_mission": int,        # P1×8h + P2×3h + P3×0.5h
+  "etp_necessaires": float,           # heures / 1400h annuel
+  "total_clients": int,
+  "clients_outils_non_conformes": int,
+  "pct_flotte_non_conforme": float,
+  "score_maturite_digitale": int,     # (outils_ok + app_ok) / (2×total) × 100
+  "clients_a_traiter_par_mois": int,  # total / mois_restants
+  "ca_total": int,
+  "ca_total_a_risque": int,           # CA clients outil=NON
+  "pct_ca_a_risque": float,
+  "ca_additionnel_max": int,          # P1×tarif_max + P2×tarif_max
+  "valeur_fae_par_dossier": int,      # ca_add_max / nb_clients
+  "tier1_count": int,                 # Nb P1
+  "tier2_count": int,                 # Nb P2
+  "tier3_count": int,                 # Nb P3
+  "ignorer_count": int                # Nb P4
+}
+
+📤 TEMPLATE EXCEL (2 FEUILLES)
+Feuille 1 : Instructions (pédagogie)
+Sections (mise en forme xlsxwriter) :
+
+    Titre bandeau violet (#667eea) : "📋 TEMPLATE FACTURATION ÉLECTRONIQUE 2026"
+    Colonnes obligatoires (texte normal + rouge pour OUTIL/APPETENCE)
+    Colonnes facultatives (dirigeant)
+    Colonnes calculées auto (segment, score, priorité)
+    Règles importantes (encadré rouge : validations strictes, pas d'espaces, segment auto)
+    Valeurs acceptées (liste exhaustive OUTIL + APPETENCE avec définitions)
+    Exemples secteurs (23 secteurs en texte libre, non imposés)
+    Footer gris : version + confidentialité
+
+Feuille 2 : Données (saisie)
+En-tête ligne 1 : Message orange "📋 Remplissez vos données (SEGMENT calculé auto) - Consultez Instructions"
+En-tête ligne 2 : Colonnes avec format violet/blanc
+Lignes 3-5 : 3 exemples (SCI EXEMPLE, SARL TEST, EURL DEMO)
+Validations strictes (data_validation) :
+
+# OUTIL_COMPATIBLE_REFORME (colonne D)
+error_type: 'stop'  # Bloquant
+source: ['OUI', 'PARTIELLEMENT', 'NON']
+message: "Vous devez choisir : OUI, PARTIELLEMENT ou NON"
+
+# APPETENCE_INFORMATIQUE (colonne E)
+error_type: 'stop'  # Bloquant
+source: ['TRES BON', 'BON', 'MOYEN', 'FAIBLE']
+message: "Vous devez choisir : TRES BON, BON, MOYEN ou FAIBLE"
+
+# CA_HONORAIRES_HT (colonne C)
+error_type: 'warning'  # Non bloquant
+validate: 'decimal' >= 0
+
+Format conditionnel : Surligner lignes avec cellules vides (rouge pâle)
+📦 DISTRIBUTION PORTABLE
+Package structure
+
+📁 SEGMENTATION_FAE_PORTABLE/
+├── 📁 python-3.13.1-embed-amd64/     # Python portable + pip + toutes dépendances
+├── 📁 app/
+│   ├── main.py
+│   ├── analyzer.py
+│   └── requirements.txt
+├── 🔧 INSTALLER.bat                  # Message "Installation déjà effectuée"
+├── 🚀 LANCER_OUTIL.bat               # python.exe -m streamlit run app\main.py
+└── 📄 LISEZMOI.txt                   # Guide utilisateur complet
+
+LANCER_OUTIL.bat (essentiel)
+
+@echo off
+chcp 65001 >nul
+title Outil Segmentation FAE
+color 0B
+
+echo ╔════════════════════════════════════════╗
+echo ║  📊  OUTIL SEGMENTATION FAE 2026  📊  ║
+echo ╚════════════════════════════════════════╝
+echo.
+echo ⏳ Démarrage...
+echo 🌐 Ouverture dans votre navigateur
+echo ⚠️  NE FERMEZ PAS cette fenêtre
+echo.
+
+python-3.13.1-embed-amd64\python.exe -m streamlit run app\main.py
+
+echo.
+echo ╔════════════════════════════════════════╗
+echo ║            OUTIL FERMÉ                 ║
+echo ╚════════════════════════════════════════╝
+pause
+
+Préparation Python Embedded
+
+# 1. Télécharger Python 3.13.1 Embedded (64-bit)
+# 2. Modifier python313._pth :
+python313.zip
+.
+Lib\site-packages
+
+import site
+
+# 3. Installer pip
+Invoke-WebRequest -Uri https://bootstrap.pypa.io/get-pip.py -OutFile get-pip.py
+.\python.exe get-pip.py
+
+# 4. Installer dépendances avec wheels uniquement
+.\python.exe -m pip install --only-binary :all: streamlit pandas openpyxl plotly python-docx xlsxwriter
+
+🎨 DESIGN SYSTEM
+Couleurs principales
+
+/* Gradient header violet */
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+/* Pédagogie (jaune ambré) */
+background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+border: 2px solid #f59e0b;
+
+/* Priorités internes */
+P1: #10b981 (vert)
+P2: #3b82f6 (bleu)
+P3: #f59e0b (orange)
+P4: #9ca3af (gris)
+
+/* Risques */
+CRITIQUE: #dc2626 (rouge foncé)
+ÉLEVÉ: #ea580c (orange vif)
+MOYEN: #f59e0b (orange)
+FAIBLE: #10b981 (vert)
+
+Typographie
+
+    Font : Inter (Google Fonts, fallback sans-serif)
+    Tailles : 2.6rem (H1), 1.1rem (paragraphe), 11pt (Word)
+
+Composants Streamlit
+
+# Métriques
+st.metric(label, value, delta="Contexte")
+
+# Expandables
+with st.expander("Titre", expanded=True/False):
+
+# Tabs
+tab1, tab2, tab3 = st.tabs(["📋 A", "📧 B", "✅ C"])
+
+# Colonnes
+col1, col2, col3 = st.columns([1, 2, 1])  # Ratios personnalisés
+
+# Downloads
+st.download_button(label, data, file_name, mime, width="stretch")
+
+🔒 SÉCURITÉ & CONFIDENTIALITÉ
+Garanties
+
+    ✅ Traitement 100% local (aucun serveur distant)
+    ✅ Aucune donnée envoyée sur internet (sauf pip install initial)
+    ✅ Fichiers stockés uniquement sur machine utilisateur
+    ✅ Streamlit en mode local (localhost:8501)
+
+Messages utilisateur
+
+    Header accueil : "Traitement 100% local et confidentiel"
+    LISEZMOI : "Traitement 100% local - Aucune donnée envoyée sur internet"
+    Footer : "CRM Enterprise FAE v7.2 - Traitement 100% local"
+
+🐛 GESTION ERREURS
+Cas traités
+
+# Fichier Excel invalide
+- Feuille "Données" absente → fallback 1ère feuille + message console
+- Colonnes manquantes → création auto + warning console
+- NOM vide → suppression ligne + compteur lignes supprimées
+
+# Valeurs invalides
+- OUTIL hors ENUM → log exemples invalides + noms clients concernés
+- APPETENCE hors ENUM → log exemples invalides + noms clients concernés
+- CA avec virgules → conversion auto virgule→point
+- CA non numérique → conversion 0.0 avec coerce
+
+# DataFrame vide après filtrage
+- Retour DataFrame vide + message console explicite
+- Évite crashes dans calculate_scores() et calculate_advanced_kpis()
+- Affiche métriques à 0 dans UI (pas de crash Streamlit)
+
+# Python-docx indisponible
+- Détection DOCX_AVAILABLE = False
+- Message clair : "Module Word indisponible. Installez : pip install python-docx"
+
+📊 EXEMPLES DONNÉES TESTS
+Template (3 lignes exemples)
+
+NOM              | SECTEUR                  | CA_HT  | OUTIL        | APPETENCE | PRENOM    | NOM | EMAIL
+SCI EXEMPLE      | Immobilier               | 8500   | NON          | TRES BON  | Camille   | A   | camille.durand@exemple.fr
+SARL TEST        | Hôtellerie               | 4200   | PARTIELLEMENT| BON       |           |     |
+EURL DEMO        | Commerce de détail       | 2100   | OUI          | MOYEN     |           |     |
+
+Profils types (scoring)
+
+# Client URGENT (P1, score 56.67)
+CA: 8500€, OUTIL: NON, APPETENCE: TRES BON
+→ Enjeu élevé (outil à changer) + forte autonomie = mission rentable
+
+# Client FORMATION (P2, score 18.67)
+CA: 4200€, OUTIL: PARTIELLEMENT, APPETENCE: BON
+→ Mise à jour outil + bonne autonomie = formation structurée
+
+# Client INFO (P3, score 7)
+CA: 2100€, OUTIL: OUI, APPETENCE: MOYEN
+→ Outil OK + autonomie moyenne = info + check léger
+
+# Client À SURVEILLER (P4, score 0.7)
+CA: 500€, OUTIL: OUI, APPETENCE: FAIBLE
+→ CA faible + outil OK + faible autonomie = veille passive
+
+🚀 COMMANDES LANCEMENT
+Développement local
+
+# Installation environnement
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r app\requirements.txt
+
+# Lancement
+python -m streamlit run app\main.py
+
+# OU (si streamlit dans PATH)
+streamlit run app\main.py
+
+Distribution portable
+
+REM Double-clic sur LANCER_OUTIL.bat
+REM OU manuellement :
+python-3.13.1-embed-amd64\python.exe -m streamlit run app\main.py
+
+📝 MESSAGES UTILISATEUR CLÉS
+Tonalité
+
+    ❌ Éviter : jargon technique (API, backend, DataFrame, pipeline)
+    ❌ Éviter : langage interne cabinet ("PRIORITÉ 1", "score opportunité")
+    ✅ Privilégier : langage valorisant client ("accompagnement renforcé", "déjà sur bonne trajectoire")
+    ✅ Privilégier : clarté pédagogique (emojis, encadrés, étapes numérotées)
+
+Emails types (bibliothèque)
+Audit urgence :
+
+    "La facturation électronique nécessite une mise à niveau pour éviter tout blocage. Rendez-vous 30 min pour : confirmer situation, identifier ajustements, définir plan simple."
+
+Formation :
+
+    "Vous êtes sur bonne trajectoire. Session 3h pour rendre vos équipes autonomes : nouveaux principes, cycle de vie facture, bonnes pratiques anti-rejet."
+
+Info :
+
+    "La réforme arrive en 2026. L'essentiel : recevoir factures électroniques, vérifier infos à jour, suivre mises à jour outil. Mode d'emploi au bon moment."
+
+🎓 AMÉLIORATIONS FUTURES POSSIBLES
+V8.0 (évolutions suggérées)
+
+    Import multi-sources : CSV, API comptables (Cegid, Sage)
+    Historique analyses : Comparaison portefeuille N vs N-1
+    Campagnes emails intégrées : Envoi groupé depuis outil (SMTP)
+    Dashboard temps réel : Suivi avancement missions (statut par client)
+    IA générative : Personnalisation automatique emails/rapports (GPT-4)
+    Mode SaaS : Déploiement cloud multi-cabinets (authentification, isolation données)
+    Mobile responsive : Optimisation affichage tablettes/smartphones
+    Webhooks : Notifications Slack/Teams sur nouveaux clients P1
+
+Limitations actuelles
+
+    ❌ Pas de base de données persistante (session Streamlit volatile)
+    ❌ Pas d'authentification multi-utilisateurs
+    ❌ Export limité à Excel/Word (pas PDF/PowerPoint natif)
+    ❌ Graphiques statiques (pas d'interactivité avancée Plotly Dash)
+    ❌ Pas de versioning fichiers (écrase exports précédents)
+
+🏆 POINTS FORTS DISTINCTIFS
+
+    Zéro courbe d'apprentissage : Template pédagogique + validations Excel bloquantes
+    Confidentialité absolue : 100% local, aucune API externe (sauf installation)
+    Distribution plug-and-play : Python embedded + .bat (aucun prérequis technique)
+    Livrables modifiables : Word/Excel éditables (pas de PDF statiques)
+    Méthodologie intégrée : Guide missions complet (pas juste un scoring)
+    Personnalisation dynamique : Prénom/nom dirigeant injectés dans emails
+    Diagnostic verbose : Logs console détaillés (debugging facilité)
+    Résilience données : Gestion robuste erreurs (virgules, colonnes manquantes, valeurs invalides)
+
+📞 SUPPORT & DOCUMENTATION
+Messages d'aide intégrés
+
+    Accueil : Encadré jaune "Conseil cabinet : commencer par 20 plus gros dossiers"
+    Matrice 2.0 : "Filtrez avec Appétence, Segment CA, Conformité → visualisez → exportez"
+    Dashboard : "Vision 360° : urgence, charge, risque et potentiel"
+    Guide missions : "Méthode prête à dérouler + livrables + scripts"
+
+LISEZMOI.txt (sections)
+
+    Utilisation (3 étapes)
+    Configuration requise
+    Structure fichier Excel (colonnes détaillées)
+    Problèmes fréquents (3 cas + solutions)
+    Support (email contact)
+
+🎯 CHECKLIST VALIDATION FINALE
+Tests fonctionnels
+
+    Import Excel 500+ lignes (< 5 secondes)
+    Toutes pages accessibles (11 pages sans crash)
+    Export Excel complet (colonnes calculées présentes)
+    Génération rapport Word (sections complètes, éditable)
+    Template Excel téléchargeable (2 feuilles, validations actives)
+    Graphiques interactifs (zoom, hover, légende)
+    Filtres Matrice 2.0 (combinaisons multiples OK)
+    Simulateur CA (calculs en temps réel)
+
+Tests données edge cases
+
+    1 seul client (pas de crash)
+    10 000+ clients (performance acceptable)
+    Tous clients P4 (KPIs = 0, pas de division par zéro)
+    CA avec virgules (conversion auto)
+    Valeurs OUTIL/APPETENCE invalides (logs clairs)
+    Colonnes Excel dans désordre (détection robuste)
+    Feuille "Instructions" en 1er (lecture auto "Données")
+
+Tests distribution
+
+    ZIP < 200 Mo (acceptable pour email/WeTransfer)
+    Double-clic LANCER_OUTIL.bat → ouverture navigateur < 10s
+    Aucune erreur console bloquante
+    Fermeture propre (Ctrl+C terminal)
+    Relancement successifs sans conflit ports
+    Test machine vierge (aucun Python/pip installé)
+
+📐 DIMENSIONNEMENT TECHNIQUE
+Performance cible
+
+    Import 1000 clients : < 3 secondes
+    Calcul scores : < 1 seconde
+    Génération rapport Word : < 2 secondes
+    Export Excel : < 2 secondes
+    Lancement Streamlit : < 8 secondes
+
+Volumétrie supportée
+
+    Clients : 1 à 50 000 (limite pratique mémoire RAM)
+    Taille fichier Excel : jusqu'à 10 Mo
+    Concurrent sessions : 1 (mono-utilisateur local)
+
+✅ VERSION FINALE
+Nom produit : CRM Enterprise FAE
+
+Version : 7.2 FINALE
+
+Date : Février 2026
+
+Auteur : Jesse DEVENON (jesse@altaplana.fr) + Claude (Anthropic)
+
+Licence : Propriétaire cabinet ALTAPLANA
+
+Support : jesse@altaplana.fr
