@@ -10,6 +10,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 import io
+import hmac
+
 from analyzer import FAEAnalyzer
 from style import inject_custom_css, render_premium_header, metric_card_html, section_divider
 
@@ -21,6 +23,79 @@ try:
     DOCX_AVAILABLE = True
 except ImportError:
     DOCX_AVAILABLE = False
+
+# ========================================
+# PROTECTION PAR MOT DE PASSE
+# ========================================
+
+def check_password():
+    """Vérifie si l'utilisateur a entré le bon mot de passe."""
+
+    def password_entered():
+        """Vérifie si le mot de passe saisi est correct."""
+        if hmac.compare_digest(st.session_state["password"], "Compta07!"):
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Ne pas stocker le mot de passe
+        else:
+            st.session_state["password_correct"] = False
+
+    # Si déjà validé, retourner True
+    if st.session_state.get("password_correct", False):
+        return True
+
+    # Afficher l'écran de connexion
+    st.markdown("""
+    <div style="
+        max-width: 400px;
+        margin: 10rem auto;
+        padding: 3rem;
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        border: 2px solid #60a5fa;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(96, 165, 250, 0.3);
+    ">
+        <h1 style="color: #000000 !important; margin-bottom: 1rem; font-weight: 700;">🔒 Accès Sécurisé</h1>
+        <p style="color: #1e293b !important; margin-bottom: 2rem; font-weight: 500; line-height: 1.6;">
+            Outil d'Analyse & Segmentation Client RFE<br>
+            Réservé aux cabinets partenaires
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    
+    with col2:
+        st.text_input(
+            "🔑 Mot de passe",
+            type="password",
+            on_change=password_entered,
+            key="password",
+            placeholder="Entrez le mot de passe cabinet"
+        )
+        
+        if "password_correct" in st.session_state:
+            st.error("❌ Mot de passe incorrect. Contactez votre administrateur.")
+    
+    st.stop()  # Arrête l'exécution si pas de mot de passe
+
+
+# Vérification du mot de passe AVANT tout le reste
+if not check_password():
+    st.stop()
+
+# ========================================
+# FIN PROTECTION - DÉBUT APP NORMALE
+# ========================================
+
+# Configuration page
+st.set_page_config(
+    page_title="Outil d'Analyse & Segmentation Client RFE",
+    page_icon="🏆",
+    layout="wide"
+)
+
+# Le reste de votre code continue ici...
 
 # ========================================
 # CONFIGURATION PAGE
