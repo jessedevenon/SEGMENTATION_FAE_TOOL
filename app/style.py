@@ -15,6 +15,8 @@ def inject_custom_css():
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&display=swap');
     
     /* ========================================
        VARIABLES COULEURS PREMIUM
@@ -198,14 +200,13 @@ def inject_custom_css():
     div[data-testid="stMetricValue"] {
         font-size: 2.2rem !important;
         font-weight: 700 !important;
-        background: var(--gold-gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: #ffffff !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     }
     
     div[data-testid="stMetricDelta"] {
         font-size: 1rem !important;
+        color: #e2e8f0 !important;
     }
     
     div[data-testid="stMetricLabel"] {
@@ -245,48 +246,118 @@ def inject_custom_css():
         border-right: 1px solid rgba(255, 255, 255, 0.08);
     }
     
+    /* Sidebar toujours affichée : masquer complètement le bouton réduire/ouvrir */
+    [data-testid="collapsedControl"],
+    button[aria-label*="collapse"],
+    button[aria-label*="Collapse"],
+    button[aria-label*="réduire"],
+    button[aria-label*="sidebar"],
+    [data-testid="collapsedControl"] * {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        opacity: 0 !important;
+        overflow: hidden !important;
+        position: absolute !important;
+        left: -9999px !important;
+    }
+    
     section[data-testid="stSidebar"] > div {
-        padding-top: 2rem;
+        padding-top: 0.75rem !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
         background: transparent !important;
     }
     
-    /* Logo sidebar */
+    /* En-tête sidebar (icône + Réforme facturation électronique) — coupe +20% */
     .sidebar-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
         text-align: center;
-        padding: 1.5rem 1rem;
-        margin-bottom: 2rem;
+        padding: 0.6rem 0.3rem 0.9rem 0.3rem;
+        margin-bottom: 0.9rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    .sidebar-logo h2 {
+    /* Titre sidebar - 3 PROPOSITIONS (décommenter celle souhaitée) */
+    
+    /* ——— Proposition 1 : Élégant serif (Playfair) ——— */
+    /*
+    .sidebar-title {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-size: 0.78rem !important;
+        font-weight: 700 !important;
+        line-height: 1.3 !important;
         color: #f1f5f9 !important;
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 1rem 0 0.5rem 0;
+        letter-spacing: 0.02em !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+    }
+    */
+    
+    /* ——— Proposition 2 : Moderne épuré (Plus Jakarta Sans) ——— */
+    .sidebar-title {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: clamp(1rem, 2.52vw, 2.12rem) !important;  /* ~5–6× plus gros qu’avant */
+        font-weight: 600 !important;
+        line-height: 1.2 !important;
+        color: #e2e8f0 !important;
+        letter-spacing: 0.02em !important;
     }
     
-    .sidebar-logo p {
-        color: #94a3b8 !important;
-        font-size: 0.85rem;
-        margin: 0;
+    /* ——— Proposition 3 : Éditorial raffiné (Cormorant Garamond) ——— */
+    /*
+    .sidebar-title {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+        font-family: 'Cormorant Garamond', Georgia, serif !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
+        font-style: italic !important;
+        line-height: 1.3 !important;
+        color: #f8fafc !important;
+        letter-spacing: 0.03em !important;
     }
+    */
     
-    /* Navigation sidebar - TEXTE BLANC */
+    /* Footer sidebar compact */
+    .sidebar-footer {
+        text-align: center;
+        padding: 0.5rem 0.25rem !important;
+        color: #64748b !important;
+        font-size: 0.7rem !important;
+        margin-top: 0.5rem;
+    }
+    .sidebar-footer p { margin: 0 !important; color: #64748b !important; }
+    
+    /* Navigation sidebar - BOUTONS RÉDUITS */
     section[data-testid="stSidebar"] .stRadio > label {
         display: none !important;
     }
     
     section[data-testid="stSidebar"] .stRadio > div {
-        gap: 0.5rem;
+        gap: 0.35rem !important;
         background: transparent !important;
     }
     
     section[data-testid="stSidebar"] .stRadio > div > label {
         background: rgba(255, 255, 255, 0.08) !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 12px !important;
-        padding: 0.75rem 1.5rem !important;
+        border-radius: 8px !important;
+        padding: 0.4rem 0.6rem !important;
         color: #f1f5f9 !important;
+        font-size: 0.8rem !important;
         transition: all 0.2s ease;
         cursor: pointer;
         font-weight: 500;
@@ -295,15 +366,15 @@ def inject_custom_css():
     section[data-testid="stSidebar"] .stRadio > div > label:hover {
         background: var(--primary-gradient) !important;
         border-color: transparent !important;
-        transform: translateX(5px);
-        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        transform: translateX(3px);
+        box-shadow: 0 2px 12px rgba(102, 126, 234, 0.4);
         color: white !important;
     }
     
     section[data-testid="stSidebar"] .stRadio > div > label[data-checked="true"] {
         background: var(--primary-gradient) !important;
         border-color: transparent !important;
-        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 2px 12px rgba(102, 126, 234, 0.3);
         color: white !important;
     }
     
@@ -481,7 +552,15 @@ def inject_custom_css():
     }
     
     .stSelectbox > div > div,
-    .stMultiSelect > div > div,
+    .stMultiSelect > div > div {
+        background: #ffffff !important;
+        border: 1px solid rgba(0, 0, 0, 0.12) !important;
+        border-radius: 12px !important;
+        color: #1a1a1a !important;
+        font-weight: 600 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+    
     .stTextInput > div > div > input,
     .stNumberInput > div > div > input {
         background: var(--glass-bg) !important;
@@ -499,86 +578,159 @@ def inject_custom_css():
         box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.3);
     }
     
-    /* Slider */
-    .stSlider > div > div > div {
-        background: var(--glass-bg);
+    /* Slider - lisibilité : piste 0-100 visible, texte toujours blanc */
+    .stSlider label {
+        color: #ffffff !important;
     }
     
+    .stSlider [data-testid="stSlider"] {
+        color: #ffffff !important;
+    }
+    
+    .stSlider span,
+    .stSlider div[role="slider"] + div,
+    .stSlider p,
+    .stSlider div[data-baseweb="slider"],
+    .stSlider * {
+        color: #ffffff !important;
+    }
+    
+    /* Valeurs min/max (0 et 100) et valeur actuelle - toujours blanches */
+    .stSlider [style*="text-align"],
+    .stSlider small,
+    .stSlider output,
+    .stSlider [data-testid="stThumbValue"] {
+        color: #ffffff !important;
+    }
+    
+    /* Piste du slider : ligne visible de 0 à 100 (fond) */
+    .stSlider > div > div > div {
+        background: rgba(255, 255, 255, 0.35) !important;
+        height: 8px !important;
+        border-radius: 4px !important;
+    }
+    
+    /* Partie remplie (à gauche du curseur) */
     .stSlider > div > div > div > div {
-        background: var(--primary-gradient) !important;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%) !important;
+        border-radius: 4px !important;
+    }
+    
+    /* Curseur (thumb) visible */
+    .stSlider [role="slider"] {
+        background: #ffffff !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
     
     /* ========================================
        SELECTBOX DROPDOWN - OPTIONS BLANCHES
     ======================================== */
     
-    /* Menu déroulant */
+    /* Menu déroulant - fond blanc, texte noir/anthracite (lisibilité) */
     div[data-baseweb="select"] ul {
-        background: #1e293b !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background: #ffffff !important;
+        border: 1px solid rgba(0, 0, 0, 0.12) !important;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
     
     div[data-baseweb="select"] li {
-        color: #f1f5f9 !important;
+        color: #1a1a1a !important;
         background: transparent !important;
         padding: 0.75rem 1rem;
+        font-weight: 600 !important;
     }
     
     div[data-baseweb="select"] li:hover {
-        background: rgba(102, 126, 234, 0.2) !important;
-        color: white !important;
+        background: #f1f5f9 !important;
+        color: #1a1a1a !important;
     }
     
-    /* Texte sélectionné */
+    /* Texte affiché dans le select (valeur choisie) */
     .stSelectbox div[data-baseweb="select"] > div {
-        color: #f1f5f9 !important;
+        color: #1a1a1a !important;
+        font-weight: 600 !important;
     }
     
     .stSelectbox div[data-baseweb="select"] span {
-        color: #f1f5f9 !important;
+        color: #1a1a1a !important;
+        font-weight: 600 !important;
     }
     
-    /* Options menu (alternative selector) */
+    /* Options menu (sélecteur alternatif Streamlit) */
     [role="listbox"] {
-        background: #1e293b !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background: #ffffff !important;
+        border: 1px solid rgba(0, 0, 0, 0.12) !important;
         border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
     
     [role="option"] {
-        color: #f1f5f9 !important;
+        color: #1a1a1a !important;
         background: transparent !important;
         padding: 0.75rem 1rem;
+        font-weight: 600 !important;
     }
     
     [role="option"]:hover {
-        background: rgba(102, 126, 234, 0.2) !important;
+        background: #f1f5f9 !important;
+        color: #1a1a1a !important;
     }
     
     [aria-selected="true"][role="option"] {
-        background: rgba(102, 126, 234, 0.3) !important;
-        color: white !important;
-        font-weight: 600;
+        background: #e2e8f0 !important;
+        color: #1a1a1a !important;
+        font-weight: 700 !important;
     }
     
     /* ========================================
-       TEXT AREA - TEXTE BLANC
+       MULTISELECT - TAGS (filtres Matrice, etc.) : bleu ciel, chiffres en noir
+    ======================================== */
+    .stMultiSelect > div > div {
+        background: #e0f2fe !important;
+        border: 1px solid #7dd3fc !important;
+        color: #1a1a1a !important;
+    }
+    
+    span[data-baseweb="tag"] {
+        background: #7dd3fc !important;
+        color: #1a1a1a !important;
+        border: 1px solid #38bdf8 !important;
+    }
+    
+    span[data-baseweb="tag"] span {
+        background: #7dd3fc !important;
+        color: #1a1a1a !important;
+    }
+    
+    .stMultiSelect input,
+    .stMultiSelect [contenteditable="true"] {
+        color: #1a1a1a !important;
+    }
+    
+    /* ========================================
+       TEXT AREA - BLOC FOND BLEU MARINE (lisibilité Bibliothèque, etc.)
     ======================================== */
     .stTextArea textarea {
-        background: var(--glass-bg) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background: #1e3a5f !important;
+        background: linear-gradient(145deg, #1e3a5f 0%, #0f2744 100%) !important;
+        border: 1px solid rgba(59, 130, 246, 0.25) !important;
         border-radius: 12px !important;
-        color: #f1f5f9 !important;
-        backdrop-filter: blur(5px);
+        color: #ffffff !important;
         font-family: 'Courier New', monospace !important;
         font-size: 0.9rem;
         line-height: 1.6;
         padding: 1rem;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    
+    .stTextArea textarea::placeholder {
+        color: rgba(226, 232, 240, 0.6) !important;
     }
     
     .stTextArea textarea:focus {
-        border-color: rgba(102, 126, 234, 0.5) !important;
-        box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.3);
+        border-color: rgba(59, 130, 246, 0.5) !important;
+        box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3), inset 0 1px 2px rgba(0, 0, 0, 0.2);
         outline: none;
     }    /* ========================================
        BOUTONS - TRANSITIONS RAPIDES
@@ -877,6 +1029,14 @@ def inject_custom_css():
         font-weight: 700;
     }
     
+    /* Bloc Mode d'emploi simulateur CA - texte noir sur fond jaune */
+    .mode-emploi-box,
+    .mode-emploi-box h4,
+    .mode-emploi-box p,
+    .mode-emploi-box * {
+        color: #1a1a1a !important;
+    }
+    
     /* Éléments en ligne */
     strong, b {
         color: #f1f5f9 !important;
@@ -916,120 +1076,78 @@ def inject_custom_css():
     }
     
     /* ========================================
-       UPLOAD WIDGET - COMPACT CENTRÉ BLEU
+       UPLOAD WIDGET - LARGEUR +50%, HAUTEUR RÉDUITE
     ======================================== */
     .stFileUploader {
-        max-width: 600px !important;
-        margin: 2rem auto !important;
-        border: 3px dashed #60a5fa;
-        border-radius: 20px;
-        padding: 2rem 1.5rem;
-        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 20px rgba(96, 165, 250, 0.2);
+        max-width: 630px !important;  /* +50% vs 420px */
+        margin: 1rem auto !important;
+        border: 2px solid rgba(102, 126, 234, 0.5);
+        border-radius: 16px;
+        padding: 0.6rem 1rem !important;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+        transition: all 0.2s ease;
+        backdrop-filter: blur(10px);
     }
     
     .stFileUploader:hover {
-        border-color: #3b82f6;
-        background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
-        box-shadow: 0 8px 30px rgba(59, 130, 246, 0.3);
-        transform: translateY(-2px);
+        border-color: rgba(102, 126, 234, 0.6);
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
     }
     
-    /* Container principal upload */
-    div[data-testid="stFileUploadDropzone"] {
-        max-width: 600px !important;
-        margin: 0 auto !important;
-    }
-    
-    /* Label principal - NOIR */
-    .stFileUploader label {
-        color: #1e293b !important;
-        font-weight: 700 !important;
-        font-size: 1.1rem !important;
-        text-align: center;
-        display: block;
-        margin-bottom: 1rem;
-    }
-    
-    /* Texte "Glissez-déposez..." - NOIR */
-    .stFileUploader [data-testid="stFileUploaderLabel"] {
-        color: #1e293b !important;
-        font-weight: 600 !important;
-        text-align: center;
-    }
-    
-    .stFileUploader p {
-        color: #334155 !important;
-        font-weight: 500;
-        text-align: center;
-        font-size: 0.95rem;
-    }
-    
-    /* Zone de drop - NOIR */
-    .stFileUploader [data-testid="stFileUploaderDropzone"] {
-        color: #1e293b !important;
-    }
-    
-    .stFileUploader [data-testid="stFileUploaderDropzone"] div {
-        color: #334155 !important;
-    }
-    
-    /* Tous les textes dans upload - NOIR */
-    .stFileUploader div {
-        color: #334155 !important;
-    }
-    
-    .stFileUploader span {
-        color: #334155 !important;
-    }
-    
-    /* Texte instructions upload */
+    /* Cacher uniquement "Drag and drop...", "Limit...", "XLSX" */
+    .stFileUploader p,
     .stFileUploader small {
-        color: #475569 !important;
-        text-align: center;
-        display: block;
-        margin-top: 0.5rem;
+        display: none !important;
     }
     
-    /* Bouton browse files - TEXTE NOIR */
+    /* Bouton : largeur augmentée (50% du bloc), hauteur réduite */
     .stFileUploader button {
         background: rgba(255, 255, 255, 0.9) !important;
         color: #000000 !important;
-        border: 2px solid #3b82f6 !important;
-        padding: 0.75rem 2rem !important;
+        border: 2px dashed #3b82f6 !important;
         border-radius: 12px !important;
+        padding: 0.35rem 1rem !important;
         font-weight: 700 !important;
-        font-size: 0.95rem !important;
-        margin: 1rem auto 0 auto !important;
+        font-size: 0.9rem !important;
+        margin: 0.35rem auto 0 auto !important;
         display: block !important;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        transition: all 0.2s ease;
+        max-width: 330px !important;  /* ~50% de 630 */
+        width: 50% !important;
+        min-width: 200px !important;
     }
-    
-    .stFileUploader button:hover {
-        transform: translateY(-2px);
-        background: #ffffff !important;
-        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-        border-color: #2563eb !important;
-    }
-    
-    /* Force texte noir dans le bouton */
     .stFileUploader button span {
         color: #000000 !important;
-    }
-    }
-    
-    .stFileUploader button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        font-weight: 700 !important;
     }
     
-    /* Icône upload centrée */
-    .stFileUploader svg {
-        display: block;
-        margin: 0 auto 1rem auto;
-        color: #3b82f6 !important;
+    /* Label au-dessus : "Sélectionner votre fichier d'import" en NOIR */
+    .stFileUploader label,
+    .stFileUploader [data-testid="stFileUploaderLabel"],
+    .stFileUploader label span {
+        color: #000000 !important;
+        font-weight: 700 !important;
+        font-size: 1.1rem !important;
+        text-align: center !important;
+        display: block !important;
+        margin-bottom: 0.4rem !important;
+    }
+    
+    /* Zone de drop : hauteur réduite */
+    .stFileUploader [data-testid="stFileUploaderDropzone"] {
+        min-height: 40px !important;
+        padding: 0.5rem !important;
+        border-radius: 12px !important;
+        border: 2px dashed #3b82f6 !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    /* Texte dans la zone de drop (si Streamlit met du texte dedans) */
+    .stFileUploader [data-testid="stFileUploaderDropzone"] * {
+        color: #000000 !important;
+        font-weight: 700 !important;
     }
     
     /* ========================================

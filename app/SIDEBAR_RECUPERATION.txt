@@ -1,0 +1,14 @@
+Si le menu latéral a disparu et que le bouton "Ouvrir le menu" ne suffit pas :
+
+1. Cliquez sur le bouton "☰ Ouvrir le menu" en haut à gauche de la page.
+
+2. Si rien ne se passe, réinitialisez le stockage du navigateur pour cette page :
+   - Appuyez sur F12 (outils de développement).
+   - Onglet "Application" (Chrome/Edge) ou "Stockage" (Firefox).
+   - Dans "Stockage local" ou "Local Storage", sélectionnez l’URL de l’app (ex. http://localhost:8501).
+   - Clic droit > "Vider" / "Clear" ou supprimez les entrées liées à Streamlit.
+   - Rechargez la page (F5 ou Ctrl+R).
+
+3. Redémarrez l’application Streamlit (arrêtez le serveur puis relancez streamlit run).
+
+Après cela, le menu devrait réapparaître (il s’ouvre par défaut au chargement).

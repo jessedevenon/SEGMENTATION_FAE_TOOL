@@ -85,23 +85,23 @@ class FAEAnalyzer:
         if ca == 0:
             return "Pas d'honoraires"
         if ca < 1000:
-            return "Très Petit (-1000€ HT)"
+            return "-1000€ HT"
         if ca < 2500:
-            return "Petit (1000€–2500€ HT)"
+            return "1000€–2500€ HT"
         if ca < 5000:
-            return "Moyen (2500€–5000€ HT)"
+            return "2500€–5000€ HT"
         if ca <= 10000:
-            return "Grand (5000€–10000€ HT)"
-        return "Très Grand (>10000€ HT)"
+            return "5000€–10000€ HT"
+        return ">10000€ HT"
 
     def load_data(self, file) -> pd.DataFrame:
-        # Lecture automatique de la feuille "Données"
+        # Lecture de la feuille "Données" : ligne 1 = message d'intro, ligne 2 = en-têtes (NOM, SECTEUR, ...)
         try:
-            df = pd.read_excel(file, sheet_name="Données")
-            print(f"\n✅ Feuille 'Données' trouvée et chargée")
+            df = pd.read_excel(file, sheet_name="Données", header=1)
+            print(f"\n✅ Feuille 'Données' trouvée et chargée (en-têtes à la ligne 2)")
         except Exception:
-            print(f"\n⚠️ Pas de feuille 'Données' trouvée, lecture de la première feuille disponible")
-            df = pd.read_excel(file, sheet_name=0)
+            print(f"\n⚠️ Pas de feuille 'Données' trouvée, lecture de la première feuille (header=1)")
+            df = pd.read_excel(file, sheet_name=0, header=1)
         
         print(f"\n" + "="*60)
         print(f"📊 DIAGNOSTIC IMPORT - {datetime.now().strftime('%H:%M:%S')}")
